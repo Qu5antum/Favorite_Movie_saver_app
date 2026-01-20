@@ -44,6 +44,10 @@ def add_new_movie(
         return new_movie
     
 
+def delete_movie(movie_id: int):
+    pass
+
+
 
 def get_all_movies():
     with SessionLocal() as session:
@@ -64,6 +68,37 @@ def update_watched(movie_id: int, watched: bool = True) -> bool:
         movie.watched = watched
         session.commit()
         return True
+    
+
+def search_movies(title: str):
+    with SessionLocal() as session:
+        result = session.execute(
+            select(Movie)
+            .options(selectinload(Movie.actors))
+            .where(Movie.title.ilike(f"%{title}"))
+        )
+        movies = result.scalars().all()
+
+        return movies
+    
+
+def filter_movies_by_actor(actor_name: str):
+    with SessionLocal() as session:
+        result = session.execute(
+            select(Movie)
+            .where(
+                Movie.actors.any(
+                    Actor.name.ilike(f"%{actor_name}%")
+                )
+            )
+            .options(selectinload(Movie.actors))
+        )
+
+        movies = result.scalars().all()
+
+        return movies
+
+    
 
  
     

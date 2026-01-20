@@ -5,6 +5,8 @@ from PySide6.QtWidgets import (
 
 from app.ui.add_movie_ui import AddMoviePage
 from app.ui.get_movies_ui import AllMoviesPage
+from app.ui.filter_movies_ui import SearchByActorPage
+from app.ui.search_movie_ui import SearchByTitlePage
 
 
 class MainWindow(QMainWindow):
@@ -19,33 +21,47 @@ class MainWindow(QMainWindow):
 
         main_layout = QHBoxLayout(central)
 
-        # 🔹 Sidebar
         sidebar = QVBoxLayout()
         btn_movies = QPushButton("Все фильмы")
         btn_add = QPushButton("Добавить фильм")
+        btn_search_title = QPushButton("Поиск по названию")
+        btn_search_actor = QPushButton("Поиск по актёру")
 
         sidebar.addWidget(btn_movies)
         sidebar.addWidget(btn_add)
+        sidebar.addWidget(btn_search_title)
+        sidebar.addWidget(btn_search_actor)
         sidebar.addStretch()
 
-        # 🔹 Pages
         self.stack = QStackedWidget()
 
         self.page_movies = AllMoviesPage()
         self.page_add = AddMoviePage()
+        self.page_search_title = SearchByTitlePage()
+        self.page_search_actor = SearchByActorPage()
 
-        self.stack.addWidget(self.page_movies)  # index 0
-        self.stack.addWidget(self.page_add)     # index 1
+        self.stack.addWidget(self.page_movies)  
+        self.stack.addWidget(self.page_add)  
+        self.stack.addWidget(self.page_search_title) 
+        self.stack.addWidget(self.page_search_actor)   
 
-        # 🔹 Navigation
+       
         btn_movies.clicked.connect(self.open_movies)
         btn_add.clicked.connect(lambda: self.stack.setCurrentIndex(1))
+        btn_search_title.clicked.connect(
+            lambda: self.stack.setCurrentWidget(self.page_search_title)
+        )
 
-        # 🔹 Layout
+        btn_search_actor.clicked.connect(
+            lambda: self.stack.setCurrentWidget(self.page_search_actor)
+        )
+
+
+      
         main_layout.addLayout(sidebar)
         main_layout.addWidget(self.stack)
 
-        # 🔹 Start page
+     
         self.open_movies()
 
     def open_movies(self):

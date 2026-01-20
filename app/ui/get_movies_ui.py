@@ -24,7 +24,6 @@ class AllMoviesPage(QWidget):
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
 
-        # 👇 реагируем на изменения чекбокса
         self.table.itemChanged.connect(self.on_watched_changed)
 
         layout.addWidget(self.table)
@@ -32,7 +31,7 @@ class AllMoviesPage(QWidget):
     def load_movies(self):
         movies = get_all_movies()
 
-        self.table.blockSignals(True)  # 🔴 важно
+        self.table.blockSignals(True) 
         self.table.setRowCount(len(movies))
 
         for row, movie in enumerate(movies):
@@ -59,7 +58,7 @@ class AllMoviesPage(QWidget):
 
             self.table.setItem(row, self.WATCHED_COL, watched_item)
 
-        self.table.blockSignals(False)  # 🔴 важно
+        self.table.blockSignals(False)  
         self.table.resizeColumnsToContents()
 
     def on_watched_changed(self, item: QTableWidgetItem):
