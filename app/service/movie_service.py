@@ -1,7 +1,7 @@
 from app.database.db import SessionLocal
 from app.database.models import Movie, Actor
 from typing import Optional, List
-from sqlalchemy import select 
+from sqlalchemy import select, delete
 from sqlalchemy.orm import selectinload
 from sqlalchemy.exc import IntegrityError
 
@@ -44,9 +44,16 @@ def add_new_movie(
         return new_movie
     
 
-def delete_movie(movie_id: int):
-    pass
+def delete_movie_by_id(movie_id: int):
+    with SessionLocal() as session:
+        movie = session.get(Movie, movie_id)
 
+        if not movie:
+            return False
+
+        session.delete(movie)
+        session.commit()
+        return True
 
 
 def get_all_movies():

@@ -1,9 +1,9 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem
+    QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QMessageBox, QPushButton
 )
 from PySide6.QtCore import Qt
 
-from app.service.movie_service import get_all_movies, update_watched
+from app.service.movie_service import get_all_movies, update_watched, delete_movie_by_id
 
 
 class AllMoviesPage(QWidget):
@@ -27,6 +27,11 @@ class AllMoviesPage(QWidget):
         self.table.itemChanged.connect(self.on_watched_changed)
 
         layout.addWidget(self.table)
+
+        self.btn_delete = QPushButton("Удалить фильм")
+        layout.addWidget(self.btn_delete)
+
+        self.btn_delete.clicked.connect(self.delete_movie)
 
     def load_movies(self):
         movies = get_all_movies()
@@ -69,3 +74,39 @@ class AllMoviesPage(QWidget):
         watched = item.checkState() == Qt.Checked
 
         update_watched(movie_id, watched)
+    
+    def delete_movie(self):
+        row = self.table.currentRow()
+
+        if row == -1:
+            QMessageBox.warning(
+                self,
+                "Ошибка",
+                "Выберите фильм для удаления"
+            )
+            return
+
+        item = self.table.item(row, self.WATCHED_COL)
+        movie_id = item.data(Qt.UserRole)
+
+        reply = QMessageBox.question(
+            self,
+            "Подтверждение",
+            "Удалить выбранный фильм?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+
+        if reply == QMessageBox.No:
+            return
+
+        success = delete_movie_by_id(movie_id)
+
+        if success:
+            self.load_movies()
+        else:
+            QMessageBox.critical(
+                self,
+                "Ошибка",
+                "Не удалось удалить фильм"
+            )
+
