@@ -1,9 +1,8 @@
 from app.database.db import SessionLocal
 from app.database.models import Movie, Actor
 from typing import Optional, List
-from sqlalchemy import select, delete
+from sqlalchemy import select
 from sqlalchemy.orm import selectinload
-from sqlalchemy.exc import IntegrityError
 
 
 def add_new_movie(
@@ -21,21 +20,20 @@ def add_new_movie(
             watched=watched,
         )
 
-        for name in actors:
-                name = name.strip()
+        if actors:
+            existing = session.execute(
+                select(Actor).where(Actor.name.in_([a.strip() for a in actors]))
+            ).scalars().all()
+            actor_map = {a.name: a for a in existing}
 
-                try:
+            for name in actors:
+                name = name.strip()
+                actor = actor_map.get(name)
+                if not actor:
                     actor = Actor(name=name)
                     session.add(actor)
-                    session.flush()   # проверка unique
-
-                except IntegrityError:
-                    session.rollback()
-                    actor = session.execute(
-                        select(Actor).where(Actor.name == name)
-                    ).scalar_one()
-
-                new_movie.actors.append(actor)
+                    session.flush()
+                new_movie.movie_actors.append(actor)
 
         session.add(new_movie)
         session.commit()
@@ -60,12 +58,12 @@ def get_all_movies():
     with SessionLocal() as session:
         movies = session.execute(
             select(Movie)
-            .options(selectinload(Movie.actors))
+            .options(selectinload(Movie.movie_actors))
         )
         
         return movies.scalars().all()
     
-def update_watched(movie_id: int, watched: bool = True) -> bool:
+def update_watched_movie(movie_id: int, watched: bool = True) -> bool:
     with SessionLocal() as session:
         movie = session.get(Movie, movie_id)
 
@@ -81,7 +79,7 @@ def search_movies(title: str):
     with SessionLocal() as session:
         result = session.execute(
             select(Movie)
-            .options(selectinload(Movie.actors))
+            .options(selectinload(Movie.movie_actors))
             .where(Movie.title.ilike(f"%{title}"))
         )
         movies = result.scalars().all()
@@ -94,11 +92,11 @@ def filter_movies_by_actor(actor_name: str):
         result = session.execute(
             select(Movie)
             .where(
-                Movie.actors.any(
+                Movie.movie_actors.any(
                     Actor.name.ilike(f"%{actor_name}%")
                 )
             )
-            .options(selectinload(Movie.actors))
+            .options(selectinload(Movie.movie_actors))
         )
 
         movies = result.scalars().all()

@@ -1,13 +1,13 @@
 from app.database.db import SessionLocal
-from app.database.models import Movie, Actor
+from app.database.models import Movie, Actor, Series
 
 session = SessionLocal()
 movies = session.query(Movie).all()
 actors = session.query(Actor).all()
+serieses = session.query(Series).all()
 
-for movie in movies:
-    print(movie.title, movie.year, movie.description)
-
+for series in serieses:
+    print(series.title, series.year, series.description)
 
 for actor in actors:
     print(actor.name)

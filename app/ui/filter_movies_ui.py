@@ -47,7 +47,7 @@ class SearchByActorPage(QWidget):
             self.table.setItem(row, 1, QTableWidgetItem(str(movie.year)))
             self.table.setItem(
                 row, 2,
-                QTableWidgetItem(", ".join(a.name for a in movie.actors))
+                QTableWidgetItem(", ".join(a.name for a in movie.movie_actors))
             )
 
             watched = QTableWidgetItem("✔" if movie.watched else "—")

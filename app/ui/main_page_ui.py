@@ -4,7 +4,9 @@ from PySide6.QtWidgets import (
 )
 
 from app.ui.add_movie_ui import AddMoviePage
+from app.ui.add_series_ui import AddSeriesPage
 from app.ui.get_movies_ui import AllMoviesPage
+from app.ui.get_serieses_ui import AllSeriesPage
 from app.ui.filter_movies_ui import SearchByActorPage
 from app.ui.search_movie_ui import SearchByTitlePage
 
@@ -22,13 +24,17 @@ class MainWindow(QMainWindow):
         main_layout = QHBoxLayout(central)
 
         sidebar = QVBoxLayout()
-        btn_movies = QPushButton("Все фильмы")
-        btn_add = QPushButton("Добавить фильм")
-        btn_search_title = QPushButton("Поиск по названию")
-        btn_search_actor = QPushButton("Поиск по актёру")
+        btn_movies = QPushButton("Все Фильмы")
+        btn_serieses = QPushButton("Все Сериалы")
+        btn_add_movie = QPushButton("Добавить Фильм")
+        btn_add_series = QPushButton("Добавить Сериал")
+        btn_search_title = QPushButton("Поиск Фильма по названию")
+        btn_search_actor = QPushButton("Поиск Фильма по актёру")
 
         sidebar.addWidget(btn_movies)
-        sidebar.addWidget(btn_add)
+        sidebar.addWidget(btn_serieses)
+        sidebar.addWidget(btn_add_movie)
+        sidebar.addWidget(btn_add_series)
         sidebar.addWidget(btn_search_title)
         sidebar.addWidget(btn_search_actor)
         sidebar.addStretch()
@@ -36,18 +42,24 @@ class MainWindow(QMainWindow):
         self.stack = QStackedWidget()
 
         self.page_movies = AllMoviesPage()
-        self.page_add = AddMoviePage()
+        self.page_serieses = AllSeriesPage()
+        self.page_add_film = AddMoviePage()
+        self.page_add_series = AddSeriesPage()
         self.page_search_title = SearchByTitlePage()
         self.page_search_actor = SearchByActorPage()
 
         self.stack.addWidget(self.page_movies)  
-        self.stack.addWidget(self.page_add)  
+        self.stack.addWidget(self.page_serieses)
+        self.stack.addWidget(self.page_add_film)  
+        self.stack.addWidget(self.page_add_series)
         self.stack.addWidget(self.page_search_title) 
         self.stack.addWidget(self.page_search_actor)   
 
        
         btn_movies.clicked.connect(self.open_movies)
-        btn_add.clicked.connect(lambda: self.stack.setCurrentIndex(1))
+        btn_serieses.clicked.connect(self.open_serieses)
+        btn_add_movie.clicked.connect(lambda: self.stack.setCurrentIndex(2))
+        btn_add_series.clicked.connect(lambda: self.stack.setCurrentWidget(self.page_add_series))
         btn_search_title.clicked.connect(
             lambda: self.stack.setCurrentWidget(self.page_search_title)
         )
@@ -63,7 +75,12 @@ class MainWindow(QMainWindow):
 
      
         self.open_movies()
+        self.open_serieses
 
     def open_movies(self):
         self.page_movies.load_movies()
         self.stack.setCurrentIndex(0)
+
+    def open_serieses(self):
+        self.page_serieses.load_series()
+        self.stack.setCurrentIndex(1)

@@ -60,7 +60,7 @@ class Actor(Base):
     )
 
     serieses: Mapped[list["Series"]] = relationship(
-        secondary=actor_movies,
+        secondary=actor_series,
         back_populates="series_actors"
     )
 

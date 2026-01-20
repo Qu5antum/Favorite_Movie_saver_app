@@ -3,18 +3,18 @@ from PySide6.QtWidgets import (
     QTextEdit, QPushButton, QCheckBox, QMessageBox
 )
 from PySide6.QtCore import Qt
-from app.service.movie_service import add_new_movie
+from app.service.series_service import add_series
 
 
-class AddMoviePage(QWidget):
+class AddSeriesPage(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Добавить Фильм")
+        self.setWindowTitle("Добавить Сериал")
 
         layout = QVBoxLayout()
 
         self.title_input = QLineEdit()
-        self.title_input.setPlaceholderText("Название Фильма")
+        self.title_input.setPlaceholderText("Название Сериала")
 
         self.year_input = QLineEdit()
         self.year_input.setPlaceholderText("Год")
@@ -28,7 +28,7 @@ class AddMoviePage(QWidget):
         self.watched_checkbox = QCheckBox("Смотрел?")
 
         self.save_btn = QPushButton("Добавить")
-        self.save_btn.clicked.connect(self.save_movie)
+        self.save_btn.clicked.connect(self.save_series)
 
         layout.addWidget(self.title_input)
         layout.addWidget(self.year_input)
@@ -39,7 +39,7 @@ class AddMoviePage(QWidget):
 
         self.setLayout(layout)
 
-    def save_movie(self):
+    def save_series(self):
         title = self.title_input.text().strip()
         if not title:
             QMessageBox.warning(self, "Error", "Требуется название")
@@ -52,7 +52,7 @@ class AddMoviePage(QWidget):
             a.strip() for a in self.actors_input.text().split(",") if a.strip()
         ]
 
-        add_new_movie(
+        add_series(
             title=title,
             year=year,
             description=self.desc_input.toPlainText(),
@@ -60,7 +60,7 @@ class AddMoviePage(QWidget):
             actors=actors,
         )
 
-        QMessageBox.information(self, "Success", "Фильм добавлен!")
+        QMessageBox.information(self, "Success", "Сериал добавлен!")
 
         self.title_input.clear()
         self.year_input.clear()

@@ -3,15 +3,15 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 
-from app.service.movie_service import get_all_movies, update_watched_movie, delete_movie_by_id
+from app.service.series_service import get_all_serieses, delete_series_by_id, update_watched_series
 
 
-class AllMoviesPage(QWidget):
+class AllSeriesPage(QWidget):
     WATCHED_COL = 3
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Все фильмы")
+        self.setWindowTitle("Все Сериалы")
 
         layout = QVBoxLayout(self)
 
@@ -28,23 +28,23 @@ class AllMoviesPage(QWidget):
 
         layout.addWidget(self.table)
 
-        self.btn_delete = QPushButton("Удалить фильм")
+        self.btn_delete = QPushButton("Удалить Сериал")
         layout.addWidget(self.btn_delete)
 
-        self.btn_delete.clicked.connect(self.delete_movie)
+        self.btn_delete.clicked.connect(self.delete_series)
 
-    def load_movies(self):
-        movies = get_all_movies()
+    def load_series(self):
+        serieses = get_all_serieses()
 
         self.table.blockSignals(True) 
-        self.table.setRowCount(len(movies))
+        self.table.setRowCount(len(serieses))
 
-        for row, movie in enumerate(movies):
-            self.table.setItem(row, 0, QTableWidgetItem(movie.title))
-            self.table.setItem(row, 1, QTableWidgetItem(str(movie.year)))
+        for row, series in enumerate(serieses):
+            self.table.setItem(row, 0, QTableWidgetItem(series.title))
+            self.table.setItem(row, 1, QTableWidgetItem(str(series.year)))
             self.table.setItem(
                 row, 2,
-                QTableWidgetItem(", ".join(a.name for a in movie.movie_actors))
+                QTableWidgetItem(", ".join(a.name for a in series.series_actors))
             )
 
             watched_item = QTableWidgetItem()
@@ -54,11 +54,11 @@ class AllMoviesPage(QWidget):
                 Qt.ItemIsUserCheckable
             )
             watched_item.setCheckState(
-                Qt.Checked if movie.watched else Qt.Unchecked
+                Qt.Checked if series.watched else Qt.Unchecked
             )
 
-            # сохраняем movie_id
-            watched_item.setData(Qt.UserRole, movie.id)
+            # сохраняем series id
+            watched_item.setData(Qt.UserRole, series.id)
             watched_item.setTextAlignment(Qt.AlignCenter)
 
             self.table.setItem(row, self.WATCHED_COL, watched_item)
@@ -70,43 +70,43 @@ class AllMoviesPage(QWidget):
         if item.column() != self.WATCHED_COL:
             return
 
-        movie_id = item.data(Qt.UserRole)
+        series_id = item.data(Qt.UserRole)
         watched = item.checkState() == Qt.Checked
 
-        update_watched_movie(movie_id, watched)
+        update_watched_series(series_id, watched)
     
-    def delete_movie(self):
+    def delete_series(self):
         row = self.table.currentRow()
 
         if row == -1:
             QMessageBox.warning(
                 self,
                 "Ошибка",
-                "Выберите фильм для удаления"
+                "Выберите сериал для удаления"
             )
             return
 
         item = self.table.item(row, self.WATCHED_COL)
-        movie_id = item.data(Qt.UserRole)
+        series_id = item.data(Qt.UserRole)
 
         reply = QMessageBox.question(
             self,
             "Подтверждение",
-            "Удалить выбранный фильм?",
+            "Удалить выбранный сериал?",
             QMessageBox.Yes | QMessageBox.No
         )
 
         if reply == QMessageBox.No:
             return
 
-        success = delete_movie_by_id(movie_id)
+        success = delete_series_by_id(series_id)
 
         if success:
-            self.load_movies()
+            self.load_series()
         else:
             QMessageBox.critical(
                 self,
                 "Ошибка",
-                "Не удалось удалить фильм"
+                "Не удалось удалить сериал"
             )
 
