@@ -1,7 +1,7 @@
-from app.database.db import Session
+from app.database.db import SessionLocal
 from app.database.models import Movie, Actor
 
-session = Session()
+session = SessionLocal()
 movies = session.query(Movie).all()
 actors = session.query(Actor).all()
 

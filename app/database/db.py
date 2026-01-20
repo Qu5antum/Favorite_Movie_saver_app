@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DB_PATH = BASE_DIR / "movies.db"
 
 engine = create_engine(f"sqlite:///{DB_PATH}")
-Session = sessionmaker(bind=engine)
+SessionLocal = sessionmaker(bind=engine)
 
 Base.metadata.create_all(bind=engine)
 

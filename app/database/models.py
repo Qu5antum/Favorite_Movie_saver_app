@@ -28,7 +28,7 @@ class Actor(Base):
     __tablename__ = "actors"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String)
+    name: Mapped[str] = mapped_column(String, unique=True)
     movies: Mapped[list["Movie"]] = relationship(
         secondary=actor_movies,
         back_populates="actors"

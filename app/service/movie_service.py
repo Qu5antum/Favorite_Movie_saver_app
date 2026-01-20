@@ -1,6 +1,9 @@
-from app.database.db import Session
+from app.database.db import SessionLocal
 from app.database.models import Movie, Actor
 from typing import Optional, List
+from sqlalchemy import select 
+from sqlalchemy.orm import selectinload
+from sqlalchemy.exc import IntegrityError
 
 
 def add_new_movie(
@@ -10,9 +13,7 @@ def add_new_movie(
     watched: bool = False,
     actors: Optional[List[str]] = None
 ):
-    session = Session()
-    
-    try:
+    with SessionLocal() as session:
         new_movie = Movie(
             title=title,
             year=year,
@@ -20,16 +21,19 @@ def add_new_movie(
             watched=watched,
         )
 
-        if actors:
-            for actor_name in actors:
-                actor = (
-                    session.query(Actor)
-                    .filter(Actor.name == actor_name)
-                    .first()
-                )
+        for name in actors:
+                name = name.strip()
 
-                if not actor:
-                    actor = Actor(name=actor_name)
+                try:
+                    actor = Actor(name=name)
+                    session.add(actor)
+                    session.flush()   # проверка unique
+
+                except IntegrityError:
+                    session.rollback()
+                    actor = session.execute(
+                        select(Actor).where(Actor.name == name)
+                    ).scalar_one()
 
                 new_movie.actors.append(actor)
 
@@ -39,6 +43,30 @@ def add_new_movie(
 
         return new_movie
     
-    finally:
-        session.close()
+
+
+def get_all_movies():
+    with SessionLocal() as session:
+        movies = session.execute(
+            select(Movie)
+            .options(selectinload(Movie.actors))
+        )
+        
+        return movies.scalars().all()
+    
+def update_watched(movie_id: int, watched: bool = True) -> bool:
+    with SessionLocal() as session:
+        movie = session.get(Movie, movie_id)
+
+        if not movie:
+            return False
+
+        movie.watched = watched
+        session.commit()
+        return True
+
+ 
+    
+     
+        
     
