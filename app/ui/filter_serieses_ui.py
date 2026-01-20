@@ -4,10 +4,10 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 
-from app.service.movie_service import filter_movies_by_actor
+from app.service.series_service import filter_serieses_by_actor
 
 
-class SearcMoviehByActorPage(QWidget):
+class SearchSeriesByActorPage(QWidget):
     def __init__(self):
         super().__init__()
 
@@ -15,7 +15,7 @@ class SearcMoviehByActorPage(QWidget):
 
         search_layout = QHBoxLayout()
         self.input = QLineEdit()
-        self.input.setPlaceholderText("Введите имя актёра из фильма")
+        self.input.setPlaceholderText("Введите имя актёра из сериала")
         self.btn_search = QPushButton("Поиск")
 
         search_layout.addWidget(self.input)
@@ -38,19 +38,19 @@ class SearcMoviehByActorPage(QWidget):
         if not actor_name:
             return
 
-        movies = filter_movies_by_actor(actor_name)
+        serieses = filter_serieses_by_actor(actor_name)
 
-        self.table.setRowCount(len(movies))
+        self.table.setRowCount(len(serieses))
 
-        for row, movie in enumerate(movies):
-            self.table.setItem(row, 0, QTableWidgetItem(movie.title))
-            self.table.setItem(row, 1, QTableWidgetItem(str(movie.year)))
+        for row, series in enumerate(serieses):
+            self.table.setItem(row, 0, QTableWidgetItem(series.title))
+            self.table.setItem(row, 1, QTableWidgetItem(str(series.year)))
             self.table.setItem(
                 row, 2,
-                QTableWidgetItem(", ".join(a.name for a in movie.movie_actors))
+                QTableWidgetItem(", ".join(a.name for a in series.series_actors))
             )
 
-            watched = QTableWidgetItem("✔" if movie.watched else "—")
+            watched = QTableWidgetItem("✔" if series.watched else "—")
             watched.setTextAlignment(Qt.AlignCenter)
             self.table.setItem(row, 3, watched)
 

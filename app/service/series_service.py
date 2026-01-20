@@ -93,11 +93,11 @@ def filter_serieses_by_actor(actor_name: str):
         result = session.execute(
             select(Series)
             .where(
-                Series.movie_actors.any(
+                Series.series_actors.any(
                     Actor.name.ilike(f"%{actor_name}%")
                 )
             )
-            .options(selectinload(Series.movie_actors))
+            .options(selectinload(Series.series_actors))
         )
 
         serieses = result.scalars().all()
