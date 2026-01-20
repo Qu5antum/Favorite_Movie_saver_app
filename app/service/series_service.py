@@ -74,3 +74,33 @@ def update_watched_series(series_id: int, watched: bool = True) -> bool:
         session.commit()
         return True
     
+
+
+def search_serises(title: str):
+    with SessionLocal() as session:
+        result = session.execute(
+            select(Series)
+            .options(selectinload(Series.series_actors))
+            .where(Series.title.ilike(f"%{title}"))
+        )
+        serieses = result.scalars().all()
+
+        return serieses
+    
+
+def filter_serieses_by_actor(actor_name: str):
+    with SessionLocal() as session:
+        result = session.execute(
+            select(Series)
+            .where(
+                Series.movie_actors.any(
+                    Actor.name.ilike(f"%{actor_name}%")
+                )
+            )
+            .options(selectinload(Series.movie_actors))
+        )
+
+        serieses = result.scalars().all()
+
+        return serieses
+    
