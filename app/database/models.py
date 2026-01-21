@@ -47,6 +47,17 @@ class Series(Base):
     )
 
 
+class Cartoon(Base):
+    __tablename__ = "cartoonmovies"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(String)
+    year: Mapped[int] = mapped_column(Integer)
+    description: Mapped[str] = mapped_column(String)
+    watched: Mapped[bool] = mapped_column(Boolean, default=False)
+    cartoon_type: Mapped[str] = mapped_column(String, nullable=False)
+
+
 
 class Actor(Base):
     __tablename__ = "actors"
