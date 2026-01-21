@@ -2,6 +2,7 @@ from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout,
     QPushButton, QStackedWidget, QHBoxLayout
 )
+from PySide6.QtGui import QIcon
 
 from app.ui.add_movie_ui import AddMoviePage
 from app.ui.add_series_ui import AddSeriesPage
@@ -23,6 +24,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Фильмотека")
+        self.setWindowIcon(QIcon("app/assets/logo.webp")) 
         self.resize(900, 600)
 
         central = QWidget()
