@@ -15,6 +15,7 @@ from app.ui.filter_serieses_ui import SearchSeriesByActorPage
 #Cartoon
 from app.ui.add_cartoon_ui import AddCartoonPage
 from app.ui.get_cartoon_ui import AllCartoonPage
+from app.ui.search_cartoon import SearchCartoonByTitlePage
 
 
 class MainWindow(QMainWindow):
@@ -42,6 +43,7 @@ class MainWindow(QMainWindow):
         btn_search_series_actor = QPushButton("Поиск Сериала по актёру")
         btn_add_cartoon = QPushButton("Добавить Мультфильм")
         btn_cartoons = QPushButton("Все Мультфильмы")
+        btn_search_cartoon_title = QPushButton("Поиск мультфильма по названию")
 
         sidebar.addWidget(btn_movies)
         sidebar.addWidget(btn_serieses)
@@ -53,6 +55,7 @@ class MainWindow(QMainWindow):
         sidebar.addWidget(btn_search_series_actor)
         sidebar.addWidget(btn_add_cartoon)
         sidebar.addWidget(btn_cartoons)
+        sidebar.addWidget(btn_search_cartoon_title)
         sidebar.addStretch()
 
         # ---------- Pages ----------
@@ -68,6 +71,7 @@ class MainWindow(QMainWindow):
         self.page_search_series_actor = SearchSeriesByActorPage()
         self.page_add_cartoon = AddCartoonPage()
         self.page_cartoons = AllCartoonPage()
+        self.page_search_cartoon = SearchCartoonByTitlePage()
 
         self.stack.addWidget(self.page_movies)
         self.stack.addWidget(self.page_serieses)
@@ -79,6 +83,7 @@ class MainWindow(QMainWindow):
         self.stack.addWidget(self.page_search_series_actor)
         self.stack.addWidget(self.page_add_cartoon)
         self.stack.addWidget(self.page_cartoons)
+        self.stack.addWidget(self.page_search_cartoon)
 
         # ---------- Connections ----------
         btn_movies.clicked.connect(self.open_movies)
@@ -106,6 +111,9 @@ class MainWindow(QMainWindow):
         )
         btn_search_series_actor.clicked.connect(
             lambda: self.stack.setCurrentWidget(self.page_search_series_actor)
+        )
+        btn_search_cartoon_title.clicked.connect(
+            lambda: self.stack.setCurrentWidget(self.page_search_cartoon)
         )
 
         # ---------- Layout ----------
