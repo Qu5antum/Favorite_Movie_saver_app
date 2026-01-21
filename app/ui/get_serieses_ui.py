@@ -18,7 +18,7 @@ class AllSeriesPage(QWidget):
         self.table = QTableWidget()
         self.table.setColumnCount(4)
         self.table.setHorizontalHeaderLabels(
-            ["Название", "Год", "Актёры", "Просмотрен"]
+            ["Название Сериала", "Год", "Актёры", "Просмотрен"]
         )
 
         self.table.setSelectionBehavior(QTableWidget.SelectRows)

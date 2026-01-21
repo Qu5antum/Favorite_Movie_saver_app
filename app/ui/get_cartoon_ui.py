@@ -3,22 +3,22 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 
-from app.service.movie_service import get_all_movies, update_watched_movie, delete_movie_by_id
+from app.service.cartoon_service import get_all_cartoons, update_watched_cartoon, delete_cartoon_by_id
 
 
-class AllMoviesPage(QWidget):
+class AllCartoonPage(QWidget):
     WATCHED_COL = 3
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Все фильмы")
+        self.setWindowTitle("Все Мультфильмы")
 
         layout = QVBoxLayout(self)
 
         self.table = QTableWidget()
         self.table.setColumnCount(4)
         self.table.setHorizontalHeaderLabels(
-            ["Название Фильма", "Год", "Актёры", "Просмотрен"]
+            ["Название Мультфильма", "Год", "Тип", "Просмотрен"]
         )
 
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
@@ -31,22 +31,19 @@ class AllMoviesPage(QWidget):
         self.btn_delete = QPushButton("Удалить фильм")
         layout.addWidget(self.btn_delete)
 
-        self.btn_delete.clicked.connect(self.delete_movie)
+        self.btn_delete.clicked.connect(self.delete_cartoon)
 
-    def load_movies(self):
-        movies = get_all_movies()
+    def load_cartoons(self):
+        cartoons = get_all_cartoons()
 
         self.table.blockSignals(True) 
-        self.table.setRowCount(len(movies))
+        self.table.setRowCount(len(cartoons))
 
-        for row, movie in enumerate(movies):
-            self.table.setItem(row, 0, QTableWidgetItem(movie.title))
-            self.table.setItem(row, 1, QTableWidgetItem(str(movie.year)))
-            self.table.setItem(
-                row, 2,
-                QTableWidgetItem(", ".join(a.name for a in movie.movie_actors))
-            )
-
+        for row, cartoon in enumerate(cartoons):
+            self.table.setItem(row, 0, QTableWidgetItem(cartoon.title))
+            self.table.setItem(row, 1, QTableWidgetItem(str(cartoon.year)))
+            self.table.setItem(row, 2, QTableWidgetItem(cartoon.cartoon_type))
+        
             watched_item = QTableWidgetItem()
             watched_item.setFlags(
                 Qt.ItemIsSelectable |
@@ -54,11 +51,10 @@ class AllMoviesPage(QWidget):
                 Qt.ItemIsUserCheckable
             )
             watched_item.setCheckState(
-                Qt.Checked if movie.watched else Qt.Unchecked
+                Qt.Checked if cartoon.watched else Qt.Unchecked
             )
 
-            # сохраняем movie_id
-            watched_item.setData(Qt.UserRole, movie.id)
+            watched_item.setData(Qt.UserRole, cartoon.id)
             watched_item.setTextAlignment(Qt.AlignCenter)
 
             self.table.setItem(row, self.WATCHED_COL, watched_item)
@@ -70,43 +66,43 @@ class AllMoviesPage(QWidget):
         if item.column() != self.WATCHED_COL:
             return
 
-        movie_id = item.data(Qt.UserRole)
+        cartoon_id = item.data(Qt.UserRole)
         watched = item.checkState() == Qt.Checked
 
-        update_watched_movie(movie_id, watched)
+        update_watched_cartoon(cartoon_id, watched)
     
-    def delete_movie(self):
+    def delete_cartoon(self):
         row = self.table.currentRow()
 
         if row == -1:
             QMessageBox.warning(
                 self,
                 "Ошибка",
-                "Выберите фильм для удаления"
+                "Выберите мультфальм для удаления"
             )
             return
 
         item = self.table.item(row, self.WATCHED_COL)
-        movie_id = item.data(Qt.UserRole)
+        cartoon_id = item.data(Qt.UserRole)
 
         reply = QMessageBox.question(
             self,
             "Подтверждение",
-            "Удалить выбранный фильм?",
+            "Удалить выбранный мультфильм?",
             QMessageBox.Yes | QMessageBox.No
         )
 
         if reply == QMessageBox.No:
             return
 
-        success = delete_movie_by_id(movie_id)
+        success = delete_cartoon_by_id(cartoon_id)
 
         if success:
-            self.load_movies()
+            self.load_cartoons()
         else:
             QMessageBox.critical(
                 self,
                 "Ошибка",
-                "Не удалось удалить фильм"
+                "Не удалось удалить мультфильм"
             )
 

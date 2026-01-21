@@ -27,7 +27,7 @@ def add_cartoon(
         return new_cartoon
     
 
-def delete_cartoon(cartoon_id: int):
+def delete_cartoon_by_id(cartoon_id: int):
      with SessionLocal() as session:
         cartoon = session.get(Cartoon, cartoon_id)
 
@@ -39,7 +39,7 @@ def delete_cartoon(cartoon_id: int):
         return True
      
 
-def get_all_movies():
+def get_all_cartoons():
     with SessionLocal() as session:
         movies = session.execute(
             select(Cartoon)
@@ -59,7 +59,7 @@ def search_cartoon_by_title(title: str):
         return cartoons
     
     
-def update_watched_movie(cartoo_id: int, watched: bool = True) -> bool:
+def update_watched_cartoon(cartoo_id: int, watched: bool = True) -> bool:
     with SessionLocal() as session:
         cartoon = session.get(Cartoon, cartoo_id)
 

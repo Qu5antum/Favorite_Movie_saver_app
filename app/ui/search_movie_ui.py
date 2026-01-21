@@ -24,7 +24,7 @@ class SearchMovieByTitlePage(QWidget):
         self.table = QTableWidget()
         self.table.setColumnCount(4)
         self.table.setHorizontalHeaderLabels(
-            ["Название", "Год", "Актёры", "Просмотрен"]
+            ["Название Фильма", "Год", "Актёры", "Просмотрен"]
         )
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
 

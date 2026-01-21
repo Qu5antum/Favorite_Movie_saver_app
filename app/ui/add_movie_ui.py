@@ -2,7 +2,6 @@ from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QLineEdit,
     QTextEdit, QPushButton, QCheckBox, QMessageBox
 )
-from PySide6.QtCore import Qt
 from app.service.movie_service import add_new_movie
 
 
