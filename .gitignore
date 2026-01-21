@@ -6,3 +6,12 @@ __pycache__/
 
 .movies.db
 *.db
+
+.build
+build
+
+.dist
+dist
+
+.main.spec
+main.spec

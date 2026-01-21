@@ -24,7 +24,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Фильмотека")
-        self.setWindowIcon(QIcon("app/assets/logo.webp")) 
+        self.setWindowIcon(QIcon("app/assets/favicon.ico")) 
         self.resize(900, 600)
 
         central = QWidget()
