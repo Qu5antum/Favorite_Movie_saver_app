@@ -39,13 +39,17 @@ def delete_cartoon_by_id(cartoon_id: int):
         return True
      
 
-def get_all_cartoons():
+def get_all_cartoons(order: str | None = None):
     with SessionLocal() as session:
-        movies = session.execute(
-            select(Cartoon)
-        )
-        
-        return movies.scalars().all()
+        query = select(Cartoon)
+
+        if order == "asc":
+            query = query.order_by(Cartoon.year.asc())
+        elif order == "desc":
+            query = query.order_by(Cartoon.year.desc())
+
+        result = session.execute(query)
+        return result.scalars().all()
     
 
 def search_cartoon_by_title(title: str):

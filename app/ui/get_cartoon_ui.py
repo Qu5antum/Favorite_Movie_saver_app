@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QMessageBox, QPushButton
+    QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QMessageBox, QPushButton, QHBoxLayout
 )
 from PySide6.QtCore import Qt
 
@@ -13,7 +13,25 @@ class AllCartoonPage(QWidget):
         super().__init__()
         self.setWindowTitle("Все Мультфильмы")
 
+        self.current_order = None
+
         layout = QVBoxLayout(self)
+
+        filter_layout = QHBoxLayout()
+
+        self.btn_all = QPushButton("Все")
+        self.btn_old = QPushButton("Старые")
+        self.btn_new = QPushButton("Новые")
+
+        self.btn_all.clicked.connect(lambda: self.set_filter(None))
+        self.btn_old.clicked.connect(lambda: self.set_filter("asc"))
+        self.btn_new.clicked.connect(lambda: self.set_filter("desc"))
+
+        filter_layout.addWidget(self.btn_all)
+        filter_layout.addWidget(self.btn_old)
+        filter_layout.addWidget(self.btn_new)
+
+        layout.addLayout(filter_layout)
 
         self.table = QTableWidget()
         self.table.setColumnCount(4)
@@ -33,8 +51,12 @@ class AllCartoonPage(QWidget):
 
         self.btn_delete.clicked.connect(self.delete_cartoon)
 
+    def set_filter(self, order: str | None):
+        self.current_order = order
+        self.load_cartoons()
+
     def load_cartoons(self):
-        cartoons = get_all_cartoons()
+        cartoons = get_all_cartoons(self.current_order)
 
         self.table.blockSignals(True) 
         self.table.setRowCount(len(cartoons))

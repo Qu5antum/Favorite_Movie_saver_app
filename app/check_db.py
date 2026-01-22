@@ -6,8 +6,7 @@ movies = session.query(Movie).all()
 actors = session.query(Actor).all()
 serieses = session.query(Series).all()
 
-for series in serieses:
-    print(series.title, series.year, series.description)
+
 
 for actor in actors:
     print(actor.name)

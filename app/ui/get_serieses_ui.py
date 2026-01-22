@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QMessageBox, QPushButton
+    QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QMessageBox, QPushButton, QHBoxLayout
 )
 from PySide6.QtCore import Qt
 
@@ -13,7 +13,25 @@ class AllSeriesPage(QWidget):
         super().__init__()
         self.setWindowTitle("Все Сериалы")
 
+        self.current_order = None
+
         layout = QVBoxLayout(self)
+
+        filter_layout = QHBoxLayout()
+
+        self.btn_all = QPushButton("Все")
+        self.btn_old = QPushButton("Старые")
+        self.btn_new = QPushButton("Новые")
+
+        self.btn_all.clicked.connect(lambda: self.set_filter(None))
+        self.btn_old.clicked.connect(lambda: self.set_filter("asc"))
+        self.btn_new.clicked.connect(lambda: self.set_filter("desc"))
+
+        filter_layout.addWidget(self.btn_all)
+        filter_layout.addWidget(self.btn_old)
+        filter_layout.addWidget(self.btn_new)
+
+        layout.addLayout(filter_layout)
 
         self.table = QTableWidget()
         self.table.setColumnCount(4)
@@ -33,8 +51,12 @@ class AllSeriesPage(QWidget):
 
         self.btn_delete.clicked.connect(self.delete_series)
 
+    def set_filter(self, order: str | None):
+        self.current_order = order
+        self.load_series()
+
     def load_series(self):
-        serieses = get_all_serieses()
+        serieses = get_all_serieses(self.current_order)
 
         self.table.blockSignals(True) 
         self.table.setRowCount(len(serieses))
