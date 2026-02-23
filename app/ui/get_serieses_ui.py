@@ -14,6 +14,7 @@ class AllSeriesPage(QWidget):
         self.setWindowTitle("Все Сериалы")
 
         self.current_order = None
+        self.current_watched = None 
 
         layout = QVBoxLayout(self)
 
@@ -22,14 +23,20 @@ class AllSeriesPage(QWidget):
         self.btn_all = QPushButton("Все")
         self.btn_old = QPushButton("Старые")
         self.btn_new = QPushButton("Новые")
+        self.btn_watched = QPushButton("Смотрел")
+        self.btn_no_watched = QPushButton("Не Смотрел")
 
-        self.btn_all.clicked.connect(lambda: self.set_filter(None))
+        self.btn_all.clicked.connect(self.reset_filters)
         self.btn_old.clicked.connect(lambda: self.set_filter("asc"))
         self.btn_new.clicked.connect(lambda: self.set_filter("desc"))
+        self.btn_watched.clicked.connect(lambda: self.set_watched_filter(True))
+        self.btn_no_watched.clicked.connect(lambda: self.set_watched_filter(False))
 
         filter_layout.addWidget(self.btn_all)
         filter_layout.addWidget(self.btn_old)
         filter_layout.addWidget(self.btn_new)
+        filter_layout.addWidget(self.btn_watched)
+        filter_layout.addWidget(self.btn_no_watched)
 
         layout.addLayout(filter_layout)
 
@@ -51,12 +58,24 @@ class AllSeriesPage(QWidget):
 
         self.btn_delete.clicked.connect(self.delete_series)
 
+    def reset_filters(self):
+        self.current_order = None
+        self.current_watched = None
+        self.load_series()
+
+    def set_watched_filter(self, watched: bool | None):
+        self.current_watched = watched
+        self.load_series()
+
     def set_filter(self, order: str | None):
         self.current_order = order
         self.load_series()
 
     def load_series(self):
-        serieses = get_all_serieses(self.current_order)
+        serieses = get_all_serieses(
+            watched=self.current_watched,
+            order=self.current_order
+        )
 
         self.table.blockSignals(True) 
         self.table.setRowCount(len(serieses))

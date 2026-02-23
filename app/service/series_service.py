@@ -53,9 +53,12 @@ def delete_series_by_id(movie_id: int):
         session.commit()
         return True
     
-def get_all_serieses(order: str | None = None):
+def get_all_serieses(watched: bool | None = None, order: str | None = None):
     with SessionLocal() as session:
         query = select(Series).options(selectinload(Series.series_actors))
+
+        if watched is not None:
+            query = query.where(Series.watched == watched)
 
         if order == "asc":
             query = query.order_by(Series.year.asc())
