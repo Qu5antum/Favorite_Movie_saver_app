@@ -54,10 +54,13 @@ def delete_movie_by_id(movie_id: int):
         return True
 
 
-def get_all_movies(order: str | None = None):
+def get_all_movies(watched: bool | None = None, order: str | None = None):
     with SessionLocal() as session:
         query = select(Movie).options(selectinload(Movie.movie_actors))
-
+         
+        if watched is not None:
+            query = query.where(Movie.watched == watched)
+        
         if order == "asc":
             query = query.order_by(Movie.year.asc())
         elif order == "desc":

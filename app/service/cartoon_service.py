@@ -1,7 +1,6 @@
 from app.database.db import SessionLocal
 from app.database.models import Cartoon
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 
 
 def add_cartoon(
@@ -39,9 +38,12 @@ def delete_cartoon_by_id(cartoon_id: int):
         return True
      
 
-def get_all_cartoons(order: str | None = None):
+def get_all_cartoons(watched: bool | None = None, order: str | None = None):
     with SessionLocal() as session:
         query = select(Cartoon)
+
+        if watched is not None:
+            query = query.where(Cartoon.watched == watched)
 
         if order == "asc":
             query = query.order_by(Cartoon.year.asc())
