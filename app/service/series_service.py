@@ -1,18 +1,22 @@
-from app.database.db import SessionLocal
+from app.database.db import Session
 from app.database.models import Series, Actor
 from typing import List, Optional
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 
-def add_series(
-    title: str,
-    year: int,
-    description: str | None = None,
-    watched: bool = False,
-    actors: Optional[List[str]] = None
-):
-    with SessionLocal() as session:
+class SeriesService:
+    def __init__(self, session: Session):
+        self.session = session
+
+    def add_series(
+        self, 
+        title: str,
+        year: int,
+        description: str | None = None,
+        watched: bool = False,
+        actors: Optional[List[str]] = None
+    ):
         new_series = Series(
             title=title,
             year=year,
@@ -21,7 +25,7 @@ def add_series(
         )
 
         if actors:
-            existing = session.execute(
+            existing = self.session.execute(
                 select(Actor).where(Actor.name.in_([a.strip() for a in actors]))
             ).scalars().all()
             actor_map = {a.name: a for a in existing}
@@ -31,30 +35,28 @@ def add_series(
                 actor = actor_map.get(name)
                 if not actor:
                     actor = Actor(name=name)
-                    session.add(actor)
-                    session.flush()
+                    self.session.add(actor)
+                    self.session.flush()
                 new_series.series_actors.append(actor)
 
-        session.add(new_series)
-        session.commit()
-        session.refresh(new_series)
+        self.session.add(new_series)
+        self.session.commit()
+        self.session.refresh(new_series)
 
         return new_series
 
 
-def delete_series_by_id(movie_id: int):
-    with SessionLocal() as session:
-        movie = session.get(Series, movie_id)
+    def delete_series_by_id(self, movie_id: int):
+        movie = self.session.get(Series, movie_id)
 
         if not movie:
             return False
 
-        session.delete(movie)
-        session.commit()
+        self.session.delete(movie)
+        self.session.commit()
         return True
-    
-def get_all_serieses(watched: bool | None = None, order: str | None = None):
-    with SessionLocal() as session:
+        
+    def get_all_serieses(self, watched: bool | None = None, order: str | None = None):
         query = select(Series).options(selectinload(Series.series_actors))
 
         if watched is not None:
@@ -65,26 +67,24 @@ def get_all_serieses(watched: bool | None = None, order: str | None = None):
         elif order == "desc":
             query = query.order_by(Series.year.desc())
 
-        result = session.execute(query)
+        result = self.session.execute(query)
         return result.scalars().all()
-    
+        
 
-def update_watched_series(series_id: int, watched: bool = True) -> bool:
-    with SessionLocal() as session:
-        series = session.get(Series, series_id)
+    def update_watched_series(self, series_id: int, watched: bool = True) -> bool:
+        series = self.session.get(Series, series_id)
 
         if not series:
             return False
 
         series.watched = watched
-        session.commit()
+        self.session.commit()
         return True
-    
+        
 
 
-def search_serises(title: str):
-    with SessionLocal() as session:
-        result = session.execute(
+    def search_serises(self, title: str):
+        result = self.session.execute(
             select(Series)
             .options(selectinload(Series.series_actors))
             .where(Series.title.ilike(f"%{title}"))
@@ -94,9 +94,8 @@ def search_serises(title: str):
         return serieses
     
 
-def filter_serieses_by_actor(actor_name: str):
-    with SessionLocal() as session:
-        result = session.execute(
+    def filter_serieses_by_actor(self, actor_name: str):
+        result = self.session.execute(
             select(Series)
             .where(
                 Series.series_actors.any(
@@ -109,4 +108,4 @@ def filter_serieses_by_actor(actor_name: str):
         serieses = result.scalars().all()
 
         return serieses
-    
+        

@@ -1,16 +1,20 @@
-from app.database.db import SessionLocal
+from app.database.db import Session
 from app.database.models import Cartoon
 from sqlalchemy import select
 
 
-def add_cartoon(
-    title: str,
-    year: int,
-    cartoon_type: str,
-    description: str | None = None,
-    watched: bool = False,
-):
-    with SessionLocal() as session: 
+class CartoonService:
+    def __init__(self, session: Session):
+        self.session = session
+
+    def add_cartoon(
+        self,
+        title: str,
+        year: int,
+        cartoon_type: str,
+        description: str | None = None,
+        watched: bool = False,
+    ):
         new_cartoon = Cartoon(
             title=title,
             year=year,
@@ -19,27 +23,25 @@ def add_cartoon(
             watched=watched
         )
 
-        session.add(new_cartoon)
-        session.commit()
-        session.refresh(new_cartoon)
+        self.session.add(new_cartoon)
+        self.session.commit()
+        self.session.refresh(new_cartoon)
 
         return new_cartoon
-    
+        
 
-def delete_cartoon_by_id(cartoon_id: int):
-     with SessionLocal() as session:
-        cartoon = session.get(Cartoon, cartoon_id)
+    def delete_cartoon_by_id(self, cartoon_id: int):
+        cartoon = self.session.get(Cartoon, cartoon_id)
 
         if not cartoon:
             return False
 
-        session.delete(cartoon)
-        session.commit()
+        self.session.delete(cartoon)
+        self.session.commit()
         return True
-     
+    
 
-def get_all_cartoons(watched: bool | None = None, order: str | None = None):
-    with SessionLocal() as session:
+    def get_all_cartoons(self, watched: bool | None = None, order: str | None = None):
         query = select(Cartoon)
 
         if watched is not None:
@@ -50,13 +52,12 @@ def get_all_cartoons(watched: bool | None = None, order: str | None = None):
         elif order == "desc":
             query = query.order_by(Cartoon.year.desc())
 
-        result = session.execute(query)
+        result = self.session.execute(query)
         return result.scalars().all()
-    
+        
 
-def search_cartoon_by_title(title: str):
-    with SessionLocal() as session:
-        result = session.execute(
+    def search_cartoon_by_title(self, title: str):
+        result = self.session.execute(
             select(Cartoon)
             .where(Cartoon.title.ilike(f"%{title}"))
         )
@@ -64,16 +65,15 @@ def search_cartoon_by_title(title: str):
 
         return cartoons
     
-    
-def update_watched_cartoon(cartoo_id: int, watched: bool = True) -> bool:
-    with SessionLocal() as session:
-        cartoon = session.get(Cartoon, cartoo_id)
+        
+    def update_watched_cartoon(self, cartoo_id: int, watched: bool = True) -> bool:
+        cartoon = self.session.get(Cartoon, cartoo_id)
 
         if not cartoon:
             return False
 
         cartoon.watched = watched
-        session.commit()
+        self.session.commit()
         return True
 
 

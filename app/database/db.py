@@ -1,4 +1,4 @@
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import create_engine
 from pathlib import Path
 import sys
@@ -22,15 +22,8 @@ engine = create_engine(
     connect_args={"check_same_thread": False}
 )
 
-
-SessionLocal = sessionmaker(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-Base.metadata.create_all(bind=engine)
+    with Session(engine, autoflush=False, autocommit=False) as session:
+        yield session
