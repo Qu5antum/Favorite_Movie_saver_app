@@ -1,3 +1,4 @@
 pyside6
 sqlalchemy
 sqlite3
+alembic

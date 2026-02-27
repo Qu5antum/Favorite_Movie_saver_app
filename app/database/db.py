@@ -1,10 +1,10 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from app.database.base import Base
-from app.database import models
 from pathlib import Path
 import sys
-import os
+
+from app.database import models
+from .base import Base
 
 
 def get_base_dir():
@@ -22,6 +22,15 @@ engine = create_engine(
     connect_args={"check_same_thread": False}
 )
 
+
 SessionLocal = sessionmaker(bind=engine)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 Base.metadata.create_all(bind=engine)

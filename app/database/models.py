@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app.database.base import Base
+from .base import Base
 from sqlalchemy import String, Integer, Boolean, ForeignKey, Table, Column
 
 
@@ -25,6 +25,7 @@ class Movie(Base):
     year: Mapped[int] = mapped_column(Integer)
     description: Mapped[str] = mapped_column(String)
     watched: Mapped[bool] = mapped_column(Boolean, default=False)
+    url: Mapped[str] = mapped_column(String, nullable=True)
 
     movie_actors: Mapped[list["Actor"]] = relationship(
         secondary=actor_movies,
@@ -40,6 +41,7 @@ class Series(Base):
     year: Mapped[int] = mapped_column(Integer)
     description: Mapped[str] = mapped_column(String)
     watched: Mapped[bool] = mapped_column(Boolean, default=False)
+    url: Mapped[str] = mapped_column(String, nullable=True)
 
     series_actors: Mapped[list["Actor"]] = relationship(
         secondary=actor_series,
@@ -56,6 +58,7 @@ class Cartoon(Base):
     description: Mapped[str] = mapped_column(String)
     watched: Mapped[bool] = mapped_column(Boolean, default=False)
     cartoon_type: Mapped[str] = mapped_column(String, nullable=False)
+    url: Mapped[str] = mapped_column(String, nullable=True)
 
 
 
