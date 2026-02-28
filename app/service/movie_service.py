@@ -33,7 +33,7 @@ class MovieService:
             actor_map = {a.name: a for a in existing}
 
             for name in actors:
-                name = name.strip()
+                name = name.strip().title()
                 actor = actor_map.get(name)
                 if not actor:
                     actor = Actor(name=name)
@@ -132,12 +132,37 @@ class MovieService:
         if url is not None:
             movie.url = url
         if actor_list is not None:
-            actors = self.session.query(Actor).filter(Actor.name.in_(actor_list)).all()
+            actors = []
+            for name in actor_list:
+                name = name.strip().title()
+
+                if not name:
+                    continue
+
+                actor = self.session.query(Actor).filter_by(name=name).first()
+
+                if not actor:
+                    actor = Actor(name=name)
+                    self.session.add(actor)
+                    self.session.flush()
+                
+                actors.append(actor)
 
             movie.movie_actors = actors
 
         self.session.commit()
         return True
+
+    def get_movie_by_id(
+        self,
+        movie_id: int
+    ):
+        movie = self.session.get(Movie, movie_id)
+
+        if not movie:
+            return False
+        
+        return movie
 
     
 

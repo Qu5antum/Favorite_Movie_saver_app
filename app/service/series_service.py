@@ -33,7 +33,7 @@ class SeriesService:
             actor_map = {a.name: a for a in existing}
 
             for name in actors:
-                name = name.strip()
+                name = name.strip().title()
                 actor = actor_map.get(name)
                 if not actor:
                     actor = Actor(name=name)
@@ -133,7 +133,21 @@ class SeriesService:
         if url is not None:
             series.url = url
         if actor_list is not None:
-            actors = self.session.query(Actor).filter(Actor.name.in_(actor_list)).all()
+            actors = []
+            for name in actor_list:
+                name = name.strip().title()
+
+                if not name:
+                    continue
+
+                actor = self.session.query(Actor).filter_by(name=name).first()
+
+                if not actor:
+                    actor = Actor(name=name)
+                    self.session.add(actor)
+                    self.session.flush()
+                
+                actors.append(actor)
 
             series.movie_actors = actors
 
