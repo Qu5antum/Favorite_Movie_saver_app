@@ -14,13 +14,15 @@ class CartoonService:
         cartoon_type: str,
         description: str | None = None,
         watched: bool = False,
+        url: str | None = None,
     ):
         new_cartoon = Cartoon(
             title=title,
             year=year,
             cartoon_type=cartoon_type,
             description=description,
-            watched=watched
+            watched=watched,
+            url = url
         )
 
         self.session.add(new_cartoon)
@@ -79,7 +81,7 @@ class CartoonService:
     def update_cartoon(
         self,
         cartoon_id: int,
-        title: int | None = None,
+        title: str | None = None,
         year: int | None = None, 
         description: str | None = None, 
         cartoon_type: str | None = None,
@@ -99,11 +101,22 @@ class CartoonService:
         if cartoon_type is not None:
             cartoon.cartoon_type = cartoon_type
         if url is not None:
-            cartoon_type.url = url
+            cartoon.url = url
 
         self.session.commit()
 
         return True
+    
+    def get_cartoon_by_id(
+        self,
+        cartoon_id: int
+    ):
+        cartoon = self.session.get(Cartoon, cartoon_id)
+
+        if not cartoon:
+            return False
+        
+        return cartoon
             
             
 

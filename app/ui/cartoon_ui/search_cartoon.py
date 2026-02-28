@@ -4,12 +4,17 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 
-from app.service.cartoon_service import search_cartoon_by_title
+from app.database.db import session
+from app.service.cartoon_service import CartoonService
 
 
 class SearchCartoonByTitlePage(QWidget):
-    def __init__(self):
+    def __init__(self, stack):
         super().__init__()
+        self.stack = stack
+
+        self.session = session
+        self.cartoon_service = CartoonService(session=self.session)
 
         layout = QVBoxLayout(self)
 
@@ -28,17 +33,24 @@ class SearchCartoonByTitlePage(QWidget):
         )
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
 
+        back_btn = QPushButton("<- Назад")
+        back_btn.clicked.connect(self.go_back)
+
         layout.addLayout(search_layout)
         layout.addWidget(self.table)
+        layout.addWidget(back_btn)
 
         self.btn_search.clicked.connect(self.search)
+
+    def go_back(self):
+        self.stack.setCurrentIndex(3)
 
     def search(self):
         title = self.input.text().strip()
         if not title:
             return
 
-        cartoons = search_cartoon_by_title(title)
+        cartoons = self.cartoon_service.search_cartoon_by_title(title)
 
         self.table.setRowCount(len(cartoons))
 
@@ -47,7 +59,7 @@ class SearchCartoonByTitlePage(QWidget):
             self.table.setItem(row, 1, QTableWidgetItem(str(cartoon.year)))
             self.table.setItem(row, 2,QTableWidgetItem(cartoon.cartoon_type))
 
-            watched = QTableWidgetItem("✔" if cartoon.watched else "—")
+            watched = QTableWidgetItem("+" if cartoon.watched else "-")
             watched.setTextAlignment(Qt.AlignCenter)
             self.table.setItem(row, 3, watched)
 

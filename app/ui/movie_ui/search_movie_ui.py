@@ -50,7 +50,7 @@ class SearchMovieByTitlePage(QWidget):
                 QTableWidgetItem(", ".join(a.name for a in movie.movie_actors))
             )
 
-            watched = QTableWidgetItem("✔" if movie.watched else "—")
+            watched = QTableWidgetItem("+" if movie.watched else "-")
             watched.setTextAlignment(Qt.AlignCenter)
             self.table.setItem(row, 3, watched)
 

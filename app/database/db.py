@@ -24,6 +24,8 @@ engine = create_engine(
 
 Base.metadata.create_all(bind=engine)
 
+session = Session(bind=engine)
+
 def get_db():
     with Session(engine, autoflush=False, autocommit=False) as session:
         yield session
