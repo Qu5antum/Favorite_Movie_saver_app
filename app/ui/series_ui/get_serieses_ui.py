@@ -7,6 +7,7 @@ import webbrowser
 
 from app.database.db import session
 from app.service.series_service import SeriesService
+from .update_series_ui import UpdateSeriesPage
 
 
 class AllSeriesPage(QWidget):
@@ -19,7 +20,7 @@ class AllSeriesPage(QWidget):
         self.setWindowTitle("Все Сериалы")
 
         self.session = session
-        self.series_service = SeriesService(session=session)
+        self.series_service = SeriesService(session=self.session)
 
         self.current_order = None
         self.current_watched = None 
@@ -65,8 +66,11 @@ class AllSeriesPage(QWidget):
         back_btn = QPushButton("<- Назад")
         back_btn.clicked.connect(self.go_back)
 
+        self.btn_update = QPushButton("Редактировать Сериал")
         self.btn_delete = QPushButton("Удалить Сериал")
+        layout.addWidget(self.btn_update)
         layout.addWidget(self.btn_delete)
+        self.btn_update.clicked.connect(self.open_update_page)
         self.btn_delete.clicked.connect(self.delete_series)
         layout.addWidget(back_btn)
 
@@ -85,6 +89,20 @@ class AllSeriesPage(QWidget):
     def set_filter(self, order: str | None):
         self.current_order = order
         self.load_series()
+
+    def open_update_page(self):
+        row = self.table.currentRow()
+
+        if row == -1:
+            QMessageBox.warning(self, "Ошибка", "Выберите сериал")
+            return
+
+        item = self.table.item(row, self.WATCHED_COL)
+        series_id = item.data(Qt.UserRole)
+
+        self.update_window = UpdateSeriesPage(self.stack, series_id)
+        self.update_window.destroyed.connect(self.load_series)
+        self.update_window.show()
 
     def load_series(self):
         serieses = self.series_service.get_all_serieses(
@@ -159,7 +177,6 @@ class AllSeriesPage(QWidget):
             url_item = self.table.item(row, column)
             url = url_item.text().strip()
             if url:
-                import webbrowser
                 webbrowser.open(url)
             else:
                 QMessageBox.information(self, "Информация", "Ссылка отсутствует")

@@ -65,7 +65,7 @@ class AllCartoonPage(QWidget):
 
         # Кнопки
         self.btn_delete = QPushButton("Удалить мультфильм")
-        self.btn_update = QPushButton("Редактировать мультфильм")
+        self.btn_update = QPushButton("Редактировать Мультфильм")
         layout.addWidget(self.btn_update)
         layout.addWidget(self.btn_delete)
         self.btn_update.clicked.connect(self.open_update_page)

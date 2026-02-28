@@ -62,7 +62,7 @@ class AllMoviesPage(QWidget):
 
         layout.addWidget(self.table)
 
-        self.btn_update = QPushButton("Редактировать фильм")
+        self.btn_update = QPushButton("Редактировать Фильм")
         self.btn_delete = QPushButton("Удалить фильм")
 
         layout.addWidget(self.btn_update)

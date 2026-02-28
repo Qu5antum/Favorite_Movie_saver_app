@@ -149,8 +149,16 @@ class SeriesService:
                 
                 actors.append(actor)
 
-            series.movie_actors = actors
+            series.series_actors = actors
 
         self.session.commit()
         return True
+    
+    def get_series_by_id(self, series_id: int):
+        series = self.session.get(Series, series_id)
+
+        if not series:
+            return False
+         
+        return series
         
