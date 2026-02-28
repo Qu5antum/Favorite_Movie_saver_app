@@ -1,6 +1,6 @@
 from app.database.db import Session
 from app.database.models import Cartoon
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 
 class CartoonService:
@@ -66,8 +66,8 @@ class CartoonService:
         return cartoons
     
         
-    def update_watched_cartoon(self, cartoo_id: int, watched: bool = True) -> bool:
-        cartoon = self.session.get(Cartoon, cartoo_id)
+    def update_watched_cartoon(self, cartoon_id: int, watched: bool = True) -> bool:
+        cartoon = self.session.get(Cartoon, cartoon_id)
 
         if not cartoon:
             return False
@@ -75,6 +75,38 @@ class CartoonService:
         cartoon.watched = watched
         self.session.commit()
         return True
+    
+    def update_cartoon(
+        self,
+        cartoon_id: int,
+        title: int | None = None,
+        year: int | None = None, 
+        description: str | None = None, 
+        cartoon_type: str | None = None,
+        url: str | None = None
+    ):
+        cartoon = self.session.get(Cartoon, cartoon_id)
+
+        if not cartoon:
+            return False
+
+        if title is not None:
+            cartoon.title = title
+        if year is not None:
+            cartoon.year = year
+        if description is not None:
+            cartoon.description = description
+        if cartoon_type is not None:
+            cartoon.cartoon_type = cartoon_type
+        if url is not None:
+            cartoon_type.url = url
+
+        self.session.commit()
+
+        return True
+            
+            
+
 
 
 

@@ -108,4 +108,33 @@ class SeriesService:
         serieses = result.scalars().all()
 
         return serieses
+    
+    def update_series(
+        self,
+        series_id: int,
+        title: str | None = None,
+        year: int | None = None,
+        description: str | None = None,
+        url: str | None = None,
+        actor_list: list[str] | None = None
+    ):
+        series = self.session.get(Series, series_id)
+        if not series:
+            return False
+        
+        if title is not None:
+            series.title = title
+        if year is not None:
+            series.year = year
+        if description is not None:
+            series.description = description
+        if url is not None:
+            series.url = url
+        if actor_list is not None:
+            actors = self.session.query(Actor).filter(Actor.name.in_(actor_list)).all()
+
+            series.movie_actors = actors
+
+        self.session.commit()
+        return True
         

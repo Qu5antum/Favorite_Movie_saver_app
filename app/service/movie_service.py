@@ -1,7 +1,7 @@
 from app.database.db import Session
 from app.database.models import Movie, Actor
 from typing import Optional, List
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 
 
@@ -107,6 +107,39 @@ class MovieService:
         movies = result.scalars().all()
 
         return movies
+    
+    def update_movie(
+        self,
+        movie_id: int,
+        title: str | None = None,
+        year: int | None = None,
+        description: str | None = None,
+        url: str | None = None,
+        actor_list: list[str] | None = None
+    ):
+        movie = self.session.get(Movie, movie_id)
+        if not movie:
+            return False
+        
+        if title is not None:
+            movie.title = title
+        if year is not None:
+            movie.year = year
+        if description is not None:
+            movie.description = description
+        if url is not None:
+            movie.url = url
+        if actor_list is not None:
+            actors = self.session.query(Actor).filter(Actor.name.in_(actor_list)).all()
+
+            movie.movie_actors = actors
+
+        self.session.commit()
+        return True
+
+    
+
+
 
         
 
