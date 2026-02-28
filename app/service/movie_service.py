@@ -15,13 +15,15 @@ class MovieService:
         year: int, 
         description: str, 
         watched: bool = False,
-        actors: Optional[List[str]] = None
+        actors: Optional[List[str]] = None,
+        url: str | None = None,
     ):
         new_movie = Movie(
             title=title,
             year=year,
             description=description,
             watched=watched,
+            url = url
         )
 
         if actors:

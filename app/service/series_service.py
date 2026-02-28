@@ -15,13 +15,15 @@ class SeriesService:
         year: int,
         description: str | None = None,
         watched: bool = False,
-        actors: Optional[List[str]] = None
+        actors: Optional[List[str]] = None,
+        url: str | None = None,
     ):
         new_series = Series(
             title=title,
             year=year,
             description=description,
             watched=watched,
+            url = url
         )
 
         if actors:
@@ -116,7 +118,7 @@ class SeriesService:
         year: int | None = None,
         description: str | None = None,
         url: str | None = None,
-        actor_list: list[str] | None = None
+        actor_list: list[str] | None = None,
     ):
         series = self.session.get(Series, series_id)
         if not series:
