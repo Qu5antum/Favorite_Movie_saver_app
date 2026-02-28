@@ -2,13 +2,19 @@ from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QLineEdit,
     QTextEdit, QPushButton, QCheckBox, QMessageBox
 )
-from app.service.movie_service import add_new_movie
+
+from app.database.db import session
+from app.service.movie_service import MovieService
 
 
 class AddMoviePage(QWidget):
-    def __init__(self):
+    def __init__(self, stack):
         super().__init__()
         self.setWindowTitle("Добавить Фильм")
+        self.stack = stack
+
+        self.session = session
+        self.movie_service = MovieService(session=session)
 
         layout = QVBoxLayout()
 
@@ -21,6 +27,9 @@ class AddMoviePage(QWidget):
         self.actors_input = QLineEdit()
         self.actors_input.setPlaceholderText("Актеры (через запятую ОБЯЗАТЕЛЬНО!!!)")
 
+        self.url_input = QLineEdit()
+        self.url_input.setPlaceholderText("Ссылка (если есть)")
+
         self.desc_input = QTextEdit()
         self.desc_input.setPlaceholderText("Описание")
 
@@ -32,11 +41,19 @@ class AddMoviePage(QWidget):
         layout.addWidget(self.title_input)
         layout.addWidget(self.year_input)
         layout.addWidget(self.actors_input)
+        layout.addWidget(self.url_input)
         layout.addWidget(self.desc_input)
         layout.addWidget(self.watched_checkbox)
         layout.addWidget(self.save_btn)
 
+        back_btn = QPushButton("<- Назад")
+        back_btn.clicked.connect(self.go_back)
+        layout.addWidget(back_btn)
+
         self.setLayout(layout)
+
+    def go_back(self):
+        self.stack.setCurrentIndex(1)
 
     def save_movie(self):
         title = self.title_input.text().strip()
@@ -51,12 +68,15 @@ class AddMoviePage(QWidget):
             a.strip() for a in self.actors_input.text().split(",") if a.strip()
         ]
 
-        add_new_movie(
+        url = self.url_input.text().strip() or None
+
+        self.movie_service.add_new_movie(
             title=title,
             year=year,
             description=self.desc_input.toPlainText(),
             watched=self.watched_checkbox.isChecked(),
             actors=actors,
+            url=url
         )
 
         QMessageBox.information(self, "Success", "Фильм добавлен!")
