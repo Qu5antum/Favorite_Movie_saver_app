@@ -4,12 +4,12 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QIcon
 
-from .add_movie_ui import AddMoviePage
-from .get_movies_ui import AllMoviesPage
-from .search_movie_ui import SearchMovieByTitlePage
-from .filter_movies_ui import SearchMovieByActorPage  
+from .add_series_ui import AddSeriesPage
+from .filter_serieses_ui import SearchSeriesByActorPage
+from .get_serieses_ui import AllSeriesPage
+from .search_series_iu import SearchSeriesByTitlePage
 
-class MoviesPage(QWidget):
+class SeriesPage(QWidget):
     def __init__(self, stack: QStackedWidget):
         super().__init__()
 
@@ -17,14 +17,14 @@ class MoviesPage(QWidget):
 
         layout = QVBoxLayout()
 
-        layout.addWidget(QLabel("🎬 Страница фильмов"))
+        layout.addWidget(QLabel("📺 Страница сериалов"))
 
         # --- Кнопки действий ---
         btn_layout = QHBoxLayout()
 
-        self.btn_add = QPushButton("➕ Добавить фильм")
-        self.btn_all = QPushButton("📄 Все фильмы")
-        self.btn_search = QPushButton("🔍 Поиск фильмов")
+        self.btn_add = QPushButton("➕ Добавить Сериал")
+        self.btn_all = QPushButton("📄 Все сериалы")
+        self.btn_search = QPushButton("🔍 Поиск сериалов")
         self.btn_search_by_actor = QPushButton("🎭 Поиск по актеру")  
 
         btn_layout.addWidget(self.btn_add)
@@ -42,10 +42,10 @@ class MoviesPage(QWidget):
         self.setLayout(layout)
 
         # --- Подключаем страницы ---
-        self.add_page = AddMoviePage(self.stack)
-        self.all_page = AllMoviesPage(self.stack)
-        self.search_page = SearchMovieByTitlePage(self.stack)
-        self.search_by_actor_page = SearchMovieByActorPage(self.stack)  
+        self.add_page = AddSeriesPage(self.stack)
+        self.all_page = AllSeriesPage(self.stack)
+        self.search_page = SearchSeriesByTitlePage(self.stack)
+        self.search_by_actor_page = SearchSeriesByActorPage(self.stack)  
 
         # --- Подключаем кнопки ---
         self.btn_add.clicked.connect(lambda: self.open_page(self.add_page))

@@ -8,21 +8,7 @@ import sys
 
 from .cartoon_ui.cartoon_page_ui import CartoonPage
 from .movie_ui.movie_page_ui import MoviesPage
-
-class SeriesPage(QWidget):
-    def __init__(self, stack):
-        super().__init__()
-        layout = QVBoxLayout()
-
-        layout.addWidget(QLabel("📺 Страница сериалов"))
-
-        back_btn = QPushButton("<- Назад")
-        back_btn.clicked.connect(lambda: stack.setCurrentIndex(0))
-
-        layout.addWidget(back_btn)
-        self.setLayout(layout)
-
-
+from .series_ui.series_page_ui import SeriesPage
 
 #Главное окно
 class MainWindow(QMainWindow):
