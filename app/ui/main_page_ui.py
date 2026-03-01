@@ -17,7 +17,7 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Фильмотека")
         self.setWindowIcon(QIcon("app/assets/favicon.ico"))
-        self.resize(900, 600)
+        self.resize(1200, 600)
 
         self.stack = QStackedWidget()
         self.setCentralWidget(self.stack)
@@ -41,9 +41,12 @@ class MainWindow(QMainWindow):
         btn_movies = QPushButton("🎬 Фильмы")
         btn_series = QPushButton("📺 Сериалы")
         btn_cartoon = QPushButton("🧸 Мультфильмы")
-        btn_movies.setFixedSize(900, 200)
-        btn_series.setFixedSize(900, 200)
-        btn_cartoon.setFixedSize(900, 200)
+        btn_movies.setFixedSize(1200, 200)
+        btn_series.setFixedSize(1200, 200)
+        btn_cartoon.setFixedSize(1200, 200)
+        btn_movies.setStyleSheet("font-size: 24px;")
+        btn_series.setStyleSheet("font-size: 24px;")
+        btn_cartoon.setStyleSheet("font-size: 24px;")
 
     
         btn_movies.clicked.connect(lambda: self.stack.setCurrentIndex(1))
@@ -56,10 +59,3 @@ class MainWindow(QMainWindow):
 
         self.main_page.setLayout(layout)
 
-
-#запуск 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec())

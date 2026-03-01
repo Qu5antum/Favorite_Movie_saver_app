@@ -24,6 +24,12 @@ class CartoonPage(QWidget):
         self.btn_add = QPushButton("➕ Добавить мультфильм")
         self.btn_all = QPushButton("📄 Все мультфильмы")
         self.btn_search = QPushButton("🔍 Поиск мультфильма")
+        self.btn_add.setFixedSize(400, 600)
+        self.btn_all.setFixedSize(400, 600)
+        self.btn_search.setFixedSize(400, 600)
+        self.btn_add.setStyleSheet("font-size: 24px;")
+        self.btn_all.setStyleSheet("font-size: 24px;")
+        self.btn_search.setStyleSheet("font-size: 24px;")
 
         btn_layout.addWidget(self.btn_add)
         btn_layout.addWidget(self.btn_all)
