@@ -26,9 +26,13 @@ class SeriesService:
             url = url
         )
 
+        self.session.add(new_series)
+
         if actors:
+            cleaned_names = list(set(a.strip().title() for a in actors))
+
             existing = self.session.execute(
-                select(Actor).where(Actor.name.in_([a.strip() for a in actors]))
+                select(Actor).where(Actor.name.in_(cleaned_names))
             ).scalars().all()
             actor_map = {a.name: a for a in existing}
 
@@ -41,7 +45,6 @@ class SeriesService:
                     self.session.flush()
                 new_series.series_actors.append(actor)
 
-        self.session.add(new_series)
         self.session.commit()
         self.session.refresh(new_series)
 
@@ -99,11 +102,8 @@ class SeriesService:
     def filter_serieses_by_actor(self, actor_name: str):
         result = self.session.execute(
             select(Series)
-            .where(
-                Series.series_actors.any(
-                    Actor.name.ilike(f"%{actor_name}%")
-                )
-            )
+            .join(Series.series_actors)
+            .where(Actor.name.ilike(f"%{actor_name}%"))
             .options(selectinload(Series.series_actors))
         )
 

@@ -26,9 +26,13 @@ class MovieService:
             url = url
         )
 
+        self.session.add(new_movie)
+
         if actors:
+            cleaned_names = list(set(a.strip().title() for a in actors))
+
             existing = self.session.execute(
-                select(Actor).where(Actor.name.in_([a.strip() for a in actors]))
+                select(Actor).where(Actor.name.in_(cleaned_names))
             ).scalars().all()
             actor_map = {a.name: a for a in existing}
 
@@ -41,7 +45,6 @@ class MovieService:
                     self.session.flush()
                 new_movie.movie_actors.append(actor)
 
-        self.session.add(new_movie)
         self.session.commit()
         self.session.refresh(new_movie)
 
@@ -98,11 +101,8 @@ class MovieService:
     def filter_movies_by_actor(self, actor_name: str):
         result = self.session.execute(
             select(Movie)
-            .where(
-                Movie.movie_actors.any(
-                    Actor.name.ilike(f"%{actor_name}%")
-                )
-            )
+            .join(Movie.movie_actors)
+            .where(Actor.name.ilike(f"%{actor_name}%"))
             .options(selectinload(Movie.movie_actors))
         )
 
